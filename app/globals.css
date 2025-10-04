@@ -83,39 +83,46 @@
 
 @layer base {
   :root {
+    /* Pink Color Scheme */
+    --misty-rose: 344 100% 95%;
+    --pink: 345 100% 88%;
+    --cherry-blossom-pink: 345 100% 85%;
+    --bakermiller-pink: 345 100% 78%;
+    --rose-pompadour: 345 95% 71%;
+
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
+    --primary: 345 95% 71%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 345 100% 88%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
+    --muted: 344 100% 95%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
+    --accent: 345 100% 85%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --border: 345 100% 88%;
+    --input: 345 100% 88%;
+    --ring: 345 95% 71%;
+    --chart-1: 345 95% 71%;
+    --chart-2: 345 100% 78%;
+    --chart-3: 345 100% 85%;
+    --chart-4: 345 100% 88%;
+    --chart-5: 344 100% 95%;
     --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
+    --sidebar-background: 344 100% 95%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-primary: 345 95% 71%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 345 100% 88%;
+    --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+    --sidebar-border: 345 100% 88%;
+    --sidebar-ring: 345 95% 71%;
   }
 
   .dark {
@@ -271,5 +278,22 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Container for landing page sections - centered with max-width */
+.container {
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
   }
 }

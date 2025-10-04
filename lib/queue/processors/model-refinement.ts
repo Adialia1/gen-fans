@@ -104,7 +104,7 @@ export async function processModelRefinement(job: Job<ModelRefinementJobData>) {
         version: sql`${customModels.version} + 1`,
         refinementHistory: refinementHistory,
         trainingMetadata: {
-          ...currentModel.trainingMetadata,
+          ...(currentModel.trainingMetadata as any || {}),
           lastRefinement: result.metadata
         },
         updatedAt: new Date()

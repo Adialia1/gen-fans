@@ -1,0 +1,46 @@
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import Link from 'next/link';
+
+export default function HomePage() {
+  return (
+    <main className="flex flex-col items-center justify-center min-h-screen bg-white">
+      <header className="absolute top-0 left-0 p-8">
+        {/* TODO: I was unable to access the logo file you provided. Please add the logo to /public/assets/images/logo.png */}
+        <Image src="/assets/images/logo.png" alt="GenFans Logo" width={40} height={40} />
+      </header>
+
+      <section className="text-center flex flex-col items-center">
+        <div className="mb-4 flex flex-col items-center">
+          {/* TODO: I was unable to access the logo file you provided. Please add the logo to /public/assets/images/logo.png */}
+          <Image src="/assets/images/logo.png" alt="GenFans Logo" width={80} height={80} />
+          <h1 className="text-5xl font-bold text-gray-900" style={{ letterSpacing: '-2px' }}>
+            GenFans
+          </h1>
+        </div>
+        <h2 className="text-[50px] font-bold text-black leading-[72px] tracking-[-2px] text-center">
+          Create Your Dream Model.
+          <br />
+          Instantly.
+        </h2>
+        <p className="mt-4 text-[22px] font-light text-gray-500" style={{ lineHeight: '30px' }}>
+          Get exclusive, perfect pictures for OnlyFans and
+          <br />
+          Instagram. No camera or models needed.
+        </p>
+        <div className="mt-8">
+          <Button
+            className="bg-[#FF729A] hover:bg-[#ff5c8a] text-white font-semibold rounded-[14px] px-[70px] py-[20px] w-[300px] h-[62px] shadow-md text-[18px]"
+          >
+            Create Your Model
+          </Button>
+        </div>
+        <div className="mt-4">
+            <Link href="/sign-in" className="text-gray-600 hover:text-gray-900 text-sm">
+                Log In
+            </Link>
+        </div>
+      </section>
+    </main>
+  );
+}

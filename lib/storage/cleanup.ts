@@ -87,8 +87,9 @@ export async function markExpiredJobs(): Promise<number> {
         sql`${jobs.resultData}->>'expiresAt' < NOW() AND ${jobs.status} = 'completed'`
       );
 
-    console.log(`Marked ${result.rowCount || 0} jobs as expired`);
-    return result.rowCount || 0;
+    const count = Array.isArray(result) ? result.length : 0;
+    console.log(`Marked ${count} jobs as expired`);
+    return count;
   } catch (error) {
     console.error('Failed to mark expired jobs:', error);
     throw error;

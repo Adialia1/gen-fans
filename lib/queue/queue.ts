@@ -34,15 +34,15 @@ aiJobsQueue.on('waiting', (jobId) => {
   console.log(`Job ${jobId} is waiting`);
 });
 
-aiJobsQueue.on('active', (job) => {
+aiJobsQueue.on('active' as any, (job: any) => {
   console.log(`Job ${job.id} is now active`);
 });
 
-aiJobsQueue.on('completed', (job) => {
+aiJobsQueue.on('completed' as any, (job: any) => {
   console.log(`Job ${job.id} completed`);
 });
 
-aiJobsQueue.on('failed', (job, err) => {
+aiJobsQueue.on('failed' as any, (job: any, err: any) => {
   console.error(`Job ${job?.id} failed:`, err);
 });
 

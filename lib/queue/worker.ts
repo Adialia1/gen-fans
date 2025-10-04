@@ -41,10 +41,6 @@ export function createWorker() {
     limiter: {
       max: 100, // Max 100 jobs
       duration: 1000 // per second
-    },
-    settings: {
-      stalledInterval: 60000, // Check for stalled jobs every 60s
-      maxStalledCount: 2 // Retry stalled jobs twice
     }
   });
 

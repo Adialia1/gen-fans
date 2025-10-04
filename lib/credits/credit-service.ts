@@ -26,7 +26,7 @@ export async function getBalance(teamId: number): Promise<CreditBalance | null> 
       totalAllocated: parseFloat(balance.totalAllocated),
       usedCredits: parseFloat(balance.totalAllocated) - parseFloat(balance.availableCredits) - parseFloat(balance.reservedCredits),
       nextReplenishmentAt: balance.nextReplenishmentAt || undefined,
-      lastReplenishedAt: balance.lastReplenishedAt || undefined
+      lastReplenishmentAt: balance.lastReplenishmentAt || undefined
     };
   } catch (error) {
     console.error('Failed to get credit balance:', error);
@@ -189,7 +189,7 @@ export async function replenishTeamCredits(teamId: number): Promise<void> {
           reservedCredits: '0.00',
           bonusCredits: '0.00',
           totalAllocated: newAllocation.toString(),
-          lastReplenishedAt: new Date(),
+          lastReplenishmentAt: new Date(),
           nextReplenishmentAt: nextReplenishment,
           updatedAt: new Date()
         })

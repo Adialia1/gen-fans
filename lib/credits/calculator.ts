@@ -136,7 +136,7 @@ export async function calculateCost(
 ): Promise<number> {
   switch (operationType) {
     case OperationType.MODEL_CREATION:
-      if (!('referenceModelId' in params) || !('trainingImagesCount' in params)) {
+      if (typeof params.referenceModelId !== 'number' || typeof params.trainingImagesCount !== 'number') {
         throw new Error('Invalid params for model creation cost calculation');
       }
       return calculateModelCreationCost({
@@ -145,7 +145,7 @@ export async function calculateCost(
       });
 
     case OperationType.MODEL_REFINEMENT:
-      if (!('refinementIteration' in params) || !('modelComplexityFactor' in params)) {
+      if (typeof params.refinementIteration !== 'number' || typeof params.modelComplexityFactor !== 'number') {
         throw new Error('Invalid params for refinement cost calculation');
       }
       return calculateRefinementCost({
@@ -154,14 +154,14 @@ export async function calculateCost(
       });
 
     case OperationType.IMAGE_GENERATION:
-      if (!('resolution' in params) || !('quality' in params) || !('modelComplexityFactor' in params)) {
+      if (!params.resolution || !params.quality || typeof params.modelComplexityFactor !== 'number') {
         throw new Error('Invalid params for image generation cost calculation');
       }
       return calculateImageGenerationCost({
-        resolution: params.resolution as '512x512' | '1024x1024' | '1536x1536',
-        quality: params.quality as 'normal' | 'hd',
+        resolution: params.resolution,
+        quality: params.quality,
         modelComplexityFactor: params.modelComplexityFactor,
-        numImages: 'numImages' in params ? params.numImages : 1
+        numImages: params.numImages || 1
       });
 
     default:

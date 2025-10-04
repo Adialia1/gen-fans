@@ -30,7 +30,7 @@ export async function createModel(
       onQueueUpdate: (update) => {
         console.log('Queue update:', update);
       },
-    });
+    }) as any;
 
     return {
       success: true,
@@ -45,10 +45,12 @@ export async function createModel(
     console.error('Model creation failed:', error);
     return {
       success: false,
-      error: {
-        code: 'MODEL_CREATION_FAILED',
-        message: error instanceof Error ? error.message : 'Unknown error occurred',
-        details: error
+      metadata: {
+        error: {
+          code: 'MODEL_CREATION_FAILED',
+          message: error instanceof Error ? error.message : 'Unknown error occurred',
+          details: error
+        }
       }
     };
   }
@@ -73,7 +75,7 @@ export async function refineModel(
       onQueueUpdate: (update) => {
         console.log('Refinement queue update:', update);
       },
-    });
+    }) as any;
 
     return {
       success: true,
@@ -89,10 +91,12 @@ export async function refineModel(
     console.error('Model refinement failed:', error);
     return {
       success: false,
-      error: {
-        code: 'MODEL_REFINEMENT_FAILED',
-        message: error instanceof Error ? error.message : 'Unknown error occurred',
-        details: error
+      metadata: {
+        error: {
+          code: 'MODEL_REFINEMENT_FAILED',
+          message: error instanceof Error ? error.message : 'Unknown error occurred',
+          details: error
+        }
       }
     };
   }
@@ -124,7 +128,7 @@ export async function generateImage(
       onQueueUpdate: (update) => {
         console.log('Generation queue update:', update);
       },
-    });
+    }) as any;
 
     return {
       success: true,
@@ -145,10 +149,12 @@ export async function generateImage(
     console.error('Image generation failed:', error);
     return {
       success: false,
-      error: {
-        code: 'IMAGE_GENERATION_FAILED',
-        message: error instanceof Error ? error.message : 'Unknown error occurred',
-        details: error
+      metadata: {
+        error: {
+          code: 'IMAGE_GENERATION_FAILED',
+          message: error instanceof Error ? error.message : 'Unknown error occurred',
+          details: error
+        }
       }
     };
   }

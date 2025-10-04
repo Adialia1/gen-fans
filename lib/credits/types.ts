@@ -19,11 +19,16 @@ export enum OperationType {
 
 export interface CreditCostParams {
   operationType: OperationType;
-  referenceComplexity?: number; // For model creation
-  refinementIteration?: number; // For model refinement
-  resolution?: '512x512' | '1024x1024' | '1536x1536'; // For image generation
-  quality?: 'normal' | 'hd'; // For image generation
-  modelComplexity?: number; // For image generation
+  // For model creation
+  referenceModelId?: number;
+  trainingImagesCount?: number;
+  // For model refinement
+  refinementIteration?: number;
+  modelComplexityFactor?: number;
+  // For image generation
+  resolution?: '512x512' | '1024x1024' | '1536x1536';
+  quality?: 'normal' | 'hd';
+  numImages?: number;
 }
 
 export interface CreditBalance {
@@ -34,7 +39,7 @@ export interface CreditBalance {
   totalAllocated: number;
   usedCredits: number;
   nextReplenishmentAt?: Date;
-  lastReplenishedAt?: Date;
+  lastReplenishmentAt?: Date;
 }
 
 export interface PricingMultipliers {

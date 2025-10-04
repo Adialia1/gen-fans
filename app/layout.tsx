@@ -1,6 +1,6 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
-import { Manrope } from 'next/font/google';
+import { Noto_Sans_Hebrew } from 'next/font/google';
 import { getUser, getTeamForUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
 
@@ -13,7 +13,7 @@ export const viewport: Viewport = {
   maximumScale: 1
 };
 
-const manrope = Manrope({ subsets: ['latin'] });
+const notoSansHebrew = Noto_Sans_Hebrew({ subsets: ['hebrew', 'latin'] });
 
 export default function RootLayout({
   children
@@ -22,8 +22,9 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
-      className={`bg-white dark:bg-gray-950 text-black dark:text-white ${manrope.className}`}
+      lang="he"
+      dir="rtl"
+      className={`bg-white dark:bg-gray-950 text-black dark:text-white ${notoSansHebrew.className}`}
     >
       <body className="min-h-[100dvh] bg-gray-50">
         <SWRConfig

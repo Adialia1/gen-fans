@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       totalAllocated: balance.totalAllocated,
       usedCredits: balance.usedCredits,
       nextReplenishmentAt: balance.nextReplenishmentAt,
-      lastReplenishedAt: balance.lastReplenishedAt
+      lastReplenishmentAt: balance.lastReplenishmentAt
     });
   } catch (error) {
     console.error('Failed to fetch credit balance:', error);

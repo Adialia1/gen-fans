@@ -1,0 +1,217 @@
+/* Import Inter font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap');
+
+/* GT Walsheim Pro Font */
+@font-face {
+  font-family: 'GT Walsheim Pro';
+  src: url('/fonts/GTWalsheimPro-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Apply Inter font as default */
+.landing-page {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background-color: #EAEEFE;
+  min-height: 100vh;
+
+  /* CSS Variables for animations */
+  --color-1: oklch(66.2% 0.225 25.9);
+  --color-2: oklch(60.4% 0.26 302);
+  --color-3: oklch(69.6% 0.165 251);
+  --color-4: oklch(80.2% 0.134 225);
+  --color-5: oklch(90.7% 0.231 133);
+  --animate-rainbow: rainbow var(--speed, 2s) infinite linear;
+  --animate-shine: shine var(--duration) infinite linear;
+}
+
+/* Container for centered sections */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Button Styles */
+.btn {
+  @apply px-4 py-2 rounded-lg font-medium inline-flex items-center justify-center tracking-tight;
+}
+
+.btnPrimary {
+  @apply bg-black text-white;
+}
+
+.btnText {
+  @apply text-black bg-transparent;
+}
+
+/* Logo Ticker */
+.logoTickerImage {
+  @apply h-8 w-auto;
+}
+
+/* Tag Component */
+.tag {
+  @apply text-sm inline-flex border border-[#A78BFA]/30 bg-[#F3F0FF] px-3 py-1 rounded-lg tracking-tight text-[#6B46C1];
+}
+
+/* Section Styles */
+.sectionTitle {
+  @apply text-center text-3xl md:text-[54px] md:leading-[60px] font-bold tracking-tighter;
+}
+
+.sectionDes {
+  @apply text-center text-[22px] leading-[30px] tracking-tight text-[#010D3E];
+}
+
+.sectionHeading {
+  @apply max-w-[540px] mx-auto;
+}
+
+/* Card Component */
+.card {
+  @apply p-10 rounded-3xl border border-[#F1F1F1] shadow-[0_7px_14px_#EAEAEA] max-w-xs w-full;
+}
+
+/* Animation Variables */
+.theme {
+  --animate-rainbow: rainbow var(--speed, 2s) infinite linear;
+  --animate-shine: shine var(--duration) infinite linear;
+  --color-1: oklch(66.2% 0.225 25.9);
+  --color-2: oklch(60.4% 0.26 302);
+  --color-3: oklch(69.6% 0.165 251);
+  --color-4: oklch(80.2% 0.134 225);
+  --color-5: oklch(90.7% 0.231 133);
+}
+
+/* Keyframe Animations */
+@keyframes rainbow {
+  0% {
+    background-position: 0%;
+  }
+  100% {
+    background-position: 200%;
+  }
+}
+
+/* Rainbow button specific animation */
+.animate-rainbow {
+  animation: rainbow var(--speed, 2s) infinite linear;
+  background-size: 200%;
+}
+
+/* Rainbow Button Styles */
+[data-slot="button"] {
+  --color-1: oklch(66.2% 0.225 25.9);
+  --color-2: oklch(60.4% 0.26 302);
+  --color-3: oklch(69.6% 0.165 251);
+  --color-4: oklch(80.2% 0.134 225);
+  --color-5: oklch(90.7% 0.231 133);
+  position: relative;
+}
+
+/* Rainbow Button Background Fix */
+.animate-rainbow {
+  background: linear-gradient(#121213,#121213),
+              linear-gradient(#121213 50%,rgba(18,18,19,0.6) 80%,rgba(18,18,19,0)),
+              linear-gradient(90deg,
+                oklch(66.2% 0.225 25.9),
+                oklch(90.7% 0.231 133),
+                oklch(69.6% 0.165 251),
+                oklch(80.2% 0.134 225),
+                oklch(60.4% 0.26 302));
+  background-clip: padding-box,border-box,border-box;
+  background-origin: border-box;
+  background-size: 200%;
+  border: 2px solid transparent;
+  color: white !important;
+}
+
+.animate-rainbow::before {
+  content: '';
+  position: absolute;
+  bottom: -20%;
+  left: 50%;
+  z-index: 0;
+  height: 20%;
+  width: 60%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg,
+    oklch(66.2% 0.225 25.9),
+    oklch(90.7% 0.231 133),
+    oklch(69.6% 0.165 251),
+    oklch(80.2% 0.134 225),
+    oklch(60.4% 0.26 302));
+  filter: blur(12px);
+  animation: rainbow 2s infinite linear;
+  background-size: 200%;
+}
+
+/* Shine animation for CTA button */
+.animate-shine {
+  animation: shine 3s infinite linear;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  to {
+    background-position: 0% 0%;
+  }
+}
+
+/* Override CSS variables for MagicCard to match section background */
+.magic-card-wrapper {
+  --background: #E8EDFF;
+  --border: rgba(255, 255, 255, 0.2);
+}
+
+.magic-card-wrapper .bg-background {
+  background: linear-gradient(to bottom, #E8EDFF, #F5F7FF);
+}
+
+.magic-card-wrapper .bg-border {
+  background: transparent;
+}
+
+/* Shiny Text Component */
+.shiny-text {
+  position: relative;
+  display: inline-block;
+}
+
+.shiny-text::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.7) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine var(--animation-duration, 3s) linear infinite;
+}
+
+.shiny-text.disabled {
+  animation: none;
+}
+
+.shiny-text.disabled::before {
+  display: none;
+}
