@@ -9,6 +9,7 @@ import {
   teams,
   teamMembers,
   activityLogs,
+  creditBalances,
   type NewUser,
   type NewTeam,
   type NewTeamMember,
@@ -206,8 +207,20 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     role: userRole
   };
 
+  // Initialize credit balance for new team
+  const nextMonth = new Date();
+  nextMonth.setMonth(nextMonth.getMonth() + 1);
+
   await Promise.all([
     db.insert(teamMembers).values(newTeamMember),
+    db.insert(creditBalances).values({
+      teamId: teamId,
+      availableCredits: '0.00', // Free tier starts with 0 credits
+      reservedCredits: '0.00',
+      bonusCredits: '0.00',
+      totalAllocated: '0.00',
+      nextReplenishmentAt: nextMonth,
+    }),
     logActivity(teamId, createdUser.id, ActivityType.SIGN_UP),
     setSession(createdUser)
   ]);

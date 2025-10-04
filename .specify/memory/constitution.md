@@ -1,47 +1,50 @@
-<!-- 
-SYNC IMPACT REPORT
-Version change: 1.0.0 → 1.0.1
-List of modified principles: 
-- Library-First: Updated to focus on image/video processing components
-- CLI Interface: Updated to reflect API-first approach for generation tasks
-- Integration Testing: Updated to focus on media generation workflows
-- Observability and Versioning: Updated to include media processing considerations
-Added sections: N/A
-Removed sections: N/A
-Templates requiring updates: 
-- ✅ .specify/templates/plan-template.md: Constitution Check aligns with updated principles
-- ✅ .specify/templates/spec-template.md: No direct changes needed
-- ✅ .specify/templates/tasks-template.md: No direct changes needed
-- ✅ .specify/templates/agent-file-template.md: No direct changes needed
-- ✅ README.md: Not found in project
-Follow-up TODOs: None
--->
-# gen-fans Constitution
+# [PROJECT_NAME] Constitution
+<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
 
 ## Core Principles
 
-### Component-Based Architecture
-Every feature starts as a reusable component; Components must be self-contained, independently testable, documented; Clear purpose required - no organizational-only components. Focus on media processing components for image and video generation workflows.
+### [PRINCIPLE_1_NAME]
+<!-- Example: I. Library-First -->
+[PRINCIPLE_1_DESCRIPTION]
+<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
 
-### API-First Approach
-Every service exposes functionality via RESTful API; JSON protocol for requests/responses with consistent error handling; Support for batch operations and status tracking for long-running generation tasks.
+### [PRINCIPLE_2_NAME]
+<!-- Example: II. CLI Interface -->
+[PRINCIPLE_2_DESCRIPTION]
+<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
 
-### Test-First (NON-NEGOTIABLE)
-TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced. All image/video generation features must have test coverage before release, including output quality validation.
+### [PRINCIPLE_3_NAME]
+<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
+[PRINCIPLE_3_DESCRIPTION]
+<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
 
-### Integration Testing
-Focus areas requiring integration tests: Media generation workflows, Payment processing integration, User authentication flows, Stripe billing cycles, Third-party API integrations for media processing, User content management.
+### [PRINCIPLE_4_NAME]
+<!-- Example: IV. Integration Testing -->
+[PRINCIPLE_4_DESCRIPTION]
+<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
 
-### Observability and Media Processing
-Structured logging required for all generation tasks; Performance monitoring of media processing pipelines; Resource utilization tracking for video/image generation; MAJOR.MINOR.BUILD format; Start simple, YAGNI principles.
+### [PRINCIPLE_5_NAME]
+<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
+[PRINCIPLE_5_DESCRIPTION]
+<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
 
-## Additional Constraints
-Technology stack requirements including Next.js, React, TypeScript, Tailwind CSS, Supabase, Stripe; Compliance standards for user-generated content including privacy and data protection; Deployment policies for media processing applications; GPU resource management requirements.
+## [SECTION_2_NAME]
+<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
 
-## Development Workflow
-Code review requirements for all pull requests; Testing gates requiring all tests to pass before merging, including media output validation; Manual approval process for generation algorithm changes; Performance benchmarks validation for media processing components.
+[SECTION_2_CONTENT]
+<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+
+## [SECTION_3_NAME]
+<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+
+[SECTION_3_CONTENT]
+<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
 
 ## Governance
-All PRs/reviews must verify compliance; Complexity must be justified; Media generation quality standards must be maintained; Use development guidance for runtime development guidance.
+<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-**Version**: 1.0.1 | **Ratified**: 2025-10-03 | **Last Amended**: 2025-10-03
+[GOVERNANCE_RULES]
+<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+
+**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
+<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->

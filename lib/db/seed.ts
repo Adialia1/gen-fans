@@ -1,7 +1,9 @@
 import { stripe } from '../payments/stripe';
 import { db } from './drizzle';
-import { users, teams, teamMembers } from './schema';
+import { users, teams, teamMembers, creditBalances } from './schema';
 import { hashPassword } from '@/lib/auth/session';
+import { seedReferenceModels } from './seeds/reference-models';
+import { seedCreditPricing } from './seeds/credit-pricing';
 
 async function createStripeProducts() {
   console.log('Creating Stripe products and prices...');
@@ -70,7 +72,24 @@ async function seed() {
     role: 'owner',
   });
 
+  // Initialize credit balance for test team
+  const nextMonth = new Date();
+  nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+  await db.insert(creditBalances).values({
+    teamId: team.id,
+    availableCredits: '500.00', // Basic plan credits
+    reservedCredits: '0.00',
+    bonusCredits: '0.00',
+    totalAllocated: '500.00',
+    nextReplenishmentAt: nextMonth,
+  });
+
+  console.log('Test team credit balance initialized.');
+
   await createStripeProducts();
+  await seedReferenceModels();
+  await seedCreditPricing();
 }
 
 seed()

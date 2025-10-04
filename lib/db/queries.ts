@@ -1,6 +1,6 @@
-import { desc, and, eq, isNull } from 'drizzle-orm';
+import { desc, and, eq, isNull, sql } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users } from './schema';
+import { activityLogs, teamMembers, teams, users, creditBalances, jobs } from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
@@ -127,4 +127,34 @@ export async function getTeamForUser() {
   });
 
   return result?.team || null;
+}
+
+/**
+ * Get credit balance for a team
+ */
+export async function getCreditBalance(teamId: number) {
+  const [balance] = await db
+    .select()
+    .from(creditBalances)
+    .where(eq(creditBalances.teamId, teamId))
+    .limit(1);
+
+  return balance || null;
+}
+
+/**
+ * Get active jobs count for a team
+ */
+export async function getActiveJobsCount(teamId: number): Promise<number> {
+  const [result] = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(jobs)
+    .where(
+      and(
+        eq(jobs.teamId, teamId),
+        sql`${jobs.status} IN ('queued', 'processing')`
+      )
+    );
+
+  return result?.count || 0;
 }

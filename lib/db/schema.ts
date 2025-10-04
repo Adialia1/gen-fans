@@ -5,6 +5,10 @@ import {
   text,
   timestamp,
   integer,
+  numeric,
+  boolean,
+  jsonb,
+  uuid,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -127,6 +131,113 @@ export type TeamDataWithMembers = Team & {
     user: Pick<User, 'id' | 'name' | 'email'>;
   })[];
 };
+
+// AI Generation Tables
+export const referenceModels = pgTable('reference_models', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 100 }).notNull(),
+  category: varchar('category', { length: 50 }).notNull(),
+  description: text('description'),
+  previewImages: text('preview_images').array().notNull(),
+  characteristics: jsonb('characteristics').notNull(),
+  complexityFactor: numeric('complexity_factor', { precision: 3, scale: 2 }).notNull().default('1.0'),
+  popularityScore: integer('popularity_score').notNull().default(0),
+  tags: jsonb('tags').default([]),
+  usageCount: integer('usage_count').notNull().default(0),
+  isActive: boolean('is_active').notNull().default(true),
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const customModels = pgTable('custom_models', {
+  id: serial('id').primaryKey(),
+  teamId: integer('team_id').notNull().references(() => teams.id, { onDelete: 'cascade' }),
+  referenceModelId: integer('reference_model_id').notNull().references(() => referenceModels.id),
+  name: varchar('name', { length: 100 }).notNull(),
+  description: text('description'),
+  creationPrompt: text('creation_prompt').notNull(),
+  refinementHistory: jsonb('refinement_history').notNull().default([]),
+  status: varchar('status', { length: 20 }).notNull().default('pending'),
+  modelUrl: text('model_url'),
+  trainingMetadata: jsonb('training_metadata'),
+  version: integer('version').notNull().default(1),
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  lastUsedAt: timestamp('last_used_at'),
+  deletedAt: timestamp('deleted_at'),
+});
+
+export const jobs = pgTable('jobs', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  teamId: integer('team_id').notNull().references(() => teams.id, { onDelete: 'cascade' }),
+  userId: integer('user_id').notNull().references(() => users.id),
+  jobType: varchar('job_type', { length: 30 }).notNull(),
+  customModelId: integer('custom_model_id').references(() => customModels.id, { onDelete: 'set null' }),
+  inputData: jsonb('input_data').notNull(),
+  status: varchar('status', { length: 20 }).notNull().default('queued'),
+  priority: integer('priority').notNull().default(10),
+  estimatedCredits: numeric('estimated_credits', { precision: 10, scale: 2 }).notNull().default('0'),
+  resultData: jsonb('result_data'),
+  error: jsonb('error'),
+  queuedAt: timestamp('queued_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  startedAt: timestamp('started_at'),
+  completedAt: timestamp('completed_at'),
+  expiresAt: timestamp('expires_at'),
+});
+
+export const creditBalances = pgTable('credit_balances', {
+  id: serial('id').primaryKey(),
+  teamId: integer('team_id').notNull().unique().references(() => teams.id, { onDelete: 'cascade' }),
+  availableCredits: numeric('available_credits', { precision: 10, scale: 2 }).notNull().default('0'),
+  reservedCredits: numeric('reserved_credits', { precision: 10, scale: 2 }).notNull().default('0'),
+  bonusCredits: numeric('bonus_credits', { precision: 10, scale: 2 }).notNull().default('0'),
+  totalAllocated: numeric('total_allocated', { precision: 10, scale: 2 }).notNull().default('0'),
+  lastReplenishmentAt: timestamp('last_replenishment_at').notNull().defaultNow(),
+  nextReplenishmentAt: timestamp('next_replenishment_at').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const creditTransactions = pgTable('credit_transactions', {
+  id: serial('id').primaryKey(),
+  teamId: integer('team_id').notNull().references(() => teams.id, { onDelete: 'cascade' }),
+  jobId: uuid('job_id').references(() => jobs.id, { onDelete: 'set null' }),
+  transactionType: varchar('transaction_type', { length: 20 }).notNull(),
+  operationType: varchar('operation_type', { length: 30 }),
+  amount: numeric('amount', { precision: 10, scale: 2 }).notNull(),
+  balanceBefore: numeric('balance_before', { precision: 10, scale: 2 }).notNull(),
+  balanceAfter: numeric('balance_after', { precision: 10, scale: 2 }).notNull(),
+  description: text('description'),
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export const creditPricingConfig = pgTable('credit_pricing_config', {
+  id: serial('id').primaryKey(),
+  operationType: varchar('operation_type', { length: 30 }).notNull().unique(),
+  baseCost: numeric('base_cost', { precision: 10, scale: 2 }).notNull(),
+  multipliers: jsonb('multipliers').notNull(),
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// Type exports
+export type ReferenceModel = typeof referenceModels.$inferSelect;
+export type NewReferenceModel = typeof referenceModels.$inferInsert;
+export type CustomModel = typeof customModels.$inferSelect;
+export type NewCustomModel = typeof customModels.$inferInsert;
+export type Job = typeof jobs.$inferSelect;
+export type NewJob = typeof jobs.$inferInsert;
+export type CreditBalance = typeof creditBalances.$inferSelect;
+export type NewCreditBalance = typeof creditBalances.$inferInsert;
+export type CreditTransaction = typeof creditTransactions.$inferSelect;
+export type NewCreditTransaction = typeof creditTransactions.$inferInsert;
+export type CreditPricingConfig = typeof creditPricingConfig.$inferSelect;
+export type NewCreditPricingConfig = typeof creditPricingConfig.$inferInsert;
 
 export enum ActivityType {
   SIGN_UP = 'SIGN_UP',

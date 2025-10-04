@@ -26,6 +26,18 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@/generation/*": [
+        "./lib/generation/*"
+      ],
+      "@/queue/*": [
+        "./lib/queue/*"
+      ],
+      "@/credits/*": [
+        "./lib/credits/*"
+      ],
+      "@/storage/*": [
+        "./lib/storage/*"
       ]
     }
   },
