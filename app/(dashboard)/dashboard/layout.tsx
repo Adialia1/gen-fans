@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { signOut } from "@/app/(login)/actions";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function DashboardLayout({
   children
@@ -19,21 +20,21 @@ export default function DashboardLayout({
 }) {
   const links = [
     {
-      label: "Dashboard",
+      label: "לוח בקרה",
       href: "/dashboard",
       icon: (
         <IconBrandTabler className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
-      label: "Pricing",
+      label: "תמחור",
       href: "/pricing",
       icon: (
         <IconUserBolt className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
-      label: "Settings",
+      label: "הגדרות",
       href: "/dashboard/settings",
       icon: (
         <IconSettings className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
@@ -52,7 +53,7 @@ export default function DashboardLayout({
   return (
     <div
       className={cn(
-        "flex w-full flex-1 flex-col overflow-hidden bg-gray-100 md:flex-row dark:bg-neutral-800",
+        "flex w-full flex-1 flex-col overflow-hidden bg-white md:flex-row dark:bg-neutral-900",
         "h-[calc(100vh-68px)]",
       )}
     >
@@ -79,7 +80,7 @@ export default function DashboardLayout({
                   }}
                   className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
                 >
-                  Logout
+                  התנתק
                 </motion.span>
               </div>
             </button>
@@ -96,17 +97,27 @@ export default function DashboardLayout({
 export const Logo = () => {
   return (
     <a
-      href="#"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
+      href="/dashboard"
+      className="relative z-20 flex items-center gap-2 py-1 text-sm font-normal"
+      dir="rtl"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="font-medium whitespace-pre text-black dark:text-white"
+        className="font-bold text-xl whitespace-pre text-black dark:text-white"
+        style={{
+          fontFamily: '"Noto Sans Hebrew", "Noto Sans Hebrew Fallback", Arial, Helvetica, sans-serif',
+        }}
       >
-        Acet Labs
+        GenFans
       </motion.span>
+      <Image
+        src="/assets/images/logo.png"
+        alt="GenFans Logo"
+        width={32}
+        height={32}
+        className="shrink-0"
+      />
     </a>
   );
 };
