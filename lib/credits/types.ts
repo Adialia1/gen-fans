@@ -12,6 +12,9 @@ export enum OperationType {
   MODEL_CREATION = 'model_creation',
   MODEL_REFINEMENT = 'model_refinement',
   IMAGE_GENERATION = 'image_generation',
+  VIDEO_GENERATION_5SEC = 'video_generation_5sec',
+  VIDEO_GENERATION_10SEC = 'video_generation_10sec',
+  AI_PROMPT_GENERATION = 'ai_prompt_generation',
 }
 
 export interface CreditCostParams {
@@ -51,24 +54,18 @@ export interface PricingConfig {
 
 // Plan-based credit allocations
 export const PLAN_CREDITS: Record<string, number> = {
-  free: 0,
-  basic: 500,
-  pro: 2000,
-  enterprise: 10000,
+  starter: 315,    // 300 images + 3 videos (5sec)
+  ultra: 1750,     // 1,000 images + 150 videos (5sec)
 };
 
-// Plan-based concurrency limits
+// Plan-based concurrency limits (removed - we don't limit since fal.ai handles workload)
 export const PLAN_CONCURRENCY: Record<string, number> = {
-  free: 0,
-  basic: 1,
-  pro: 3,
-  enterprise: 10,
+  starter: 50,
+  ultra: 50,
 };
 
 // Plan-based priority (lower = higher priority)
 export const PLAN_PRIORITY: Record<string, number> = {
-  free: 10,
-  basic: 10,
-  pro: 5,
-  enterprise: 1,
+  starter: 10,  // Standard queue
+  ultra: 1,     // Instant processing (highest priority)
 };
