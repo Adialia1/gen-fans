@@ -1,206 +1,107 @@
-'use client';
-
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { customerPortalAction } from '@/lib/payments/actions';
-import { TeamDataWithMembers } from '@/lib/db/schema';
-import useSWR from 'swr';
-import { Suspense } from 'react';
-import { CreditCard, Sparkles } from 'lucide-react';
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-type CreditBalance = {
-  availableCredits: number;
-  reservedCredits: number;
-  bonusCredits: number;
-  totalAllocated: number;
-  usedCredits: number;
-};
-
-function SubscriptionSkeleton() {
-  return (
-    <Card className="mb-8 h-[200px] border-pink-100">
-      <CardHeader>
-        <CardTitle className="text-right">המנוי שלי</CardTitle>
-      </CardHeader>
-    </Card>
-  );
-}
-
-function ManageSubscription() {
-  const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
-  const { data: creditData } = useSWR<CreditBalance>('/api/credits/balance', fetcher);
-
-  const isPremium = teamData?.subscriptionStatus === 'active' || teamData?.subscriptionStatus === 'trialing';
-  const isPaymentFailed = teamData?.subscriptionStatus === 'past_due' || teamData?.subscriptionStatus === 'unpaid';
-
-  return (
-    <Card className="mb-8 border-pink-100 shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-right flex items-center justify-between">
-          <span>המנוי שלי</span>
-          <CreditCard className="h-6 w-6 text-[#fb6f92]" />
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          {/* Payment Failed Warning */}
-          {isPaymentFailed && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-right">
-              <div className="flex items-center justify-end gap-2 mb-2">
-                <span className="text-red-800 font-semibold">שגיאה בתשלום</span>
-                <svg className="h-5 w-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <p className="text-sm text-red-700 mb-3">
-                התשלום שלך נכשל. הקרדיטים שלך אופסו עד שהתשלום יעבור בהצלחה.
-              </p>
-              <form action={customerPortalAction}>
-                <Button
-                  type="submit"
-                  size="sm"
-                  className="bg-red-600 hover:bg-red-700 text-white"
-                >
-                  עדכן אמצעי תשלום
-                </Button>
-              </form>
-            </div>
-          )}
-
-          {/* Current Plan */}
-          <div className="bg-gradient-to-br from-pink-50 to-white p-6 rounded-lg border border-pink-100">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-right">
-                <h3 className="text-2xl font-bold text-gray-900">
-                  {teamData?.planName || 'חינם'}
-                </h3>
-                <p className="text-sm text-gray-600 mt-1">
-                  {teamData?.subscriptionStatus === 'active'
-                    ? 'מנוי פעיל'
-                    : teamData?.subscriptionStatus === 'trialing'
-                    ? 'תקופת ניסיון'
-                    : teamData?.subscriptionStatus === 'past_due'
-                    ? 'תשלום באיחור'
-                    : teamData?.subscriptionStatus === 'unpaid'
-                    ? 'ממתין לתשלום'
-                    : 'תוכנית חינם'}
-                </p>
-              </div>
-              {isPremium && (
-                <div className="bg-[#fb6f92] text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
-                  <Sparkles className="h-3 w-3" />
-                  פרימיום
-                </div>
-              )}
-            </div>
-
-            {/* Credits Info */}
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="text-center p-3 bg-white rounded-lg border border-pink-100">
-                <p className="text-sm text-gray-600">קרדיטים זמינים</p>
-                <p className="text-2xl font-bold text-[#fb6f92] mt-1">
-                  {creditData?.availableCredits ?? 0}
-                </p>
-              </div>
-              <div className="text-center p-3 bg-white rounded-lg border border-pink-100">
-                <p className="text-sm text-gray-600">סה"כ קרדיטים</p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">
-                  {creditData?.totalAllocated ?? 0}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            {isPremium ? (
-              <form action={customerPortalAction} className="flex-1">
-                <Button
-                  type="submit"
-                  variant="outline"
-                  className="w-full border-pink-200 text-[#fb6f92] hover:bg-pink-50"
-                >
-                  ניהול מנוי
-                </Button>
-              </form>
-            ) : (
-              <Button
-                asChild
-                className="flex-1 bg-gradient-to-l from-[#fb6f92] to-[#ff8fab] hover:from-[#fa5a82] hover:to-[#ff7a9b] text-white"
-              >
-                <a href="/pricing">שדרגו למנוי פרימיום</a>
-              </Button>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function QuickStats() {
-  const { data: creditData } = useSWR<CreditBalance>('/api/credits/balance', fetcher);
-
-  return (
-    <div className="grid md:grid-cols-3 gap-6">
-      <Card className="border-pink-100">
-        <CardHeader>
-          <CardTitle className="text-right text-sm font-medium text-gray-600">
-            תמונות שנוצרו
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-3xl font-bold text-[#fb6f92] text-right">0</p>
-        </CardContent>
-      </Card>
-
-      <Card className="border-pink-100">
-        <CardHeader>
-          <CardTitle className="text-right text-sm font-medium text-gray-600">
-            מודלים פעילים
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-3xl font-bold text-[#fb6f92] text-right">0</p>
-        </CardContent>
-      </Card>
-
-      <Card className="border-pink-100">
-        <CardHeader>
-          <CardTitle className="text-right text-sm font-medium text-gray-600">
-            קרדיטים זמינים
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-3xl font-bold text-[#fb6f92] text-right">
-            {creditData?.availableCredits ?? 0}
-          </p>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+"use client";
+import { LayoutTextFlip } from "@/components/ui/layout-text-flip";
+import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
+import { BlurFade } from "@/components/ui/blur-fade";
+import { motion } from "motion/react";
+import { useState } from "react";
 
 export default function DashboardPage() {
-  return (
-    <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-bold mb-6 text-right bg-gradient-to-l from-[#fb6f92] to-[#ff8fab] bg-clip-text text-transparent">
-        ברוכים הבאים לדשבורד
-      </h1>
-      <Suspense fallback={<SubscriptionSkeleton />}>
-        <ManageSubscription />
-      </Suspense>
+  const placeholders = [
+    "צור תמונות AI מדהימות",
+    "צור סרטוני AI מקצועיים",
+    "החלף פנים בתמונות",
+    "בנה מודלים מותאמים אישית",
+    "הפוך את הרעיונות שלך למציאות",
+  ];
 
-      <Suspense fallback={<div className="h-40 animate-pulse bg-gray-100 rounded-lg" />}>
-        <QuickStats />
-      </Suspense>
-    </section>
+  // Generate placeholder images for history gallery
+  const images = Array.from({ length: 9 }, (_, i) => {
+    const isLandscape = i % 2 === 0;
+    const width = isLandscape ? 800 : 600;
+    const height = isLandscape ? 600 : 800;
+    return `https://picsum.photos/seed/${i + 1}/${width}/${height}`;
+  });
+
+  // Modal state management
+  const [selectedType, setSelectedType] = useState<'image' | 'video'>('image');
+  const [uploadMode, setUploadMode] = useState<'upload' | 'premade'>('upload');
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [selectedCharacter, setSelectedCharacter] = useState<string | null>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+  };
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("submitted", {
+      selectedType,
+      uploadMode,
+      uploadedFiles,
+      selectedCharacter,
+    });
+  };
+
+  return (
+    <div className="flex h-full w-full flex-1 flex-col items-center rounded-tl-2xl border border-neutral-200 bg-white p-4 md:p-10 dark:border-neutral-700 dark:bg-neutral-900 pt-20 md:pt-32">
+      <motion.div className="relative mx-4 mb-12 md:mb-20 flex flex-col items-center justify-center gap-6 text-center sm:mx-0 sm:flex-row" dir="rtl">
+        <LayoutTextFlip
+          text="!ברוכים הבאים! מה תרצו ליצור "
+          words={["תמונות AI", "סרטוני AI", "החלפת פנים", "מודלים מותאמים"]}
+          duration={2500}
+        />
+      </motion.div>
+
+      <div className="w-full max-w-4xl px-4">
+        <PlaceholdersAndVanishInput
+          placeholders={placeholders}
+          onChange={handleChange}
+          onSubmit={onSubmit}
+          selectedType={selectedType}
+          onTypeChange={setSelectedType}
+          uploadMode={uploadMode}
+          onUploadModeChange={setUploadMode}
+          uploadedFiles={uploadedFiles}
+          onFilesChange={setUploadedFiles}
+          selectedCharacter={selectedCharacter}
+          onCharacterChange={setSelectedCharacter}
+        />
+      </div>
+
+      <p
+        className="mt-12 text-center text-lg md:text-xl text-neutral-600 dark:text-neutral-400 max-w-3xl px-4"
+        dir="rtl"
+        style={{
+          fontFamily: '"Noto Sans Hebrew", "Noto Sans Hebrew Fallback", Arial, Helvetica, sans-serif',
+          fontWeight: 500
+        }}
+      >
+        צרו תוכן מדהים באמצעות בינת מלאכותית עם GenFans. בחרו מה תרצו ליצור והתחילו עכשיו.
+      </p>
+
+      {/* Generation History Gallery */}
+      <section id="generation-history" className="w-full max-w-6xl px-4 mt-16 md:mt-24">
+        <h2
+          className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-neutral-100 mb-8 text-center"
+          dir="rtl"
+          style={{
+            fontFamily: '"Noto Sans Hebrew", "Noto Sans Hebrew Fallback", Arial, Helvetica, sans-serif',
+          }}
+        >
+          היסטוריית יצירות
+        </h2>
+        <div className="columns-2 gap-4 sm:columns-3">
+          {images.map((imageUrl, idx) => (
+            <BlurFade key={imageUrl} delay={0.25 + idx * 0.05} inView>
+              <img
+                className="mb-4 size-full rounded-lg object-contain"
+                src={imageUrl}
+                alt={`Generated image ${idx + 1}`}
+              />
+            </BlurFade>
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }

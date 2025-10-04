@@ -12,7 +12,7 @@ import { motion } from "motion/react";
 import { signOut } from "@/app/(login)/actions";
 import { useRouter } from "next/navigation";
 
-export default function DashboardLayout({
+export default function PricingLayout({
   children
 }: {
   children: React.ReactNode;
