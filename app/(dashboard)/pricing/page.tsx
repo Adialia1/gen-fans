@@ -3,7 +3,6 @@
 import { checkoutAction } from '@/lib/payments/actions';
 import { Check, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { SubmitButton } from './submit-button';
 
 // Hardcoded Price IDs from Stripe
 const PRICING = {
@@ -21,89 +20,71 @@ export default function PricingPage() {
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly');
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" dir="rtl">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Choose Your Plan</h1>
-        <p className="text-lg text-gray-600 mb-8">Simple, transparent pricing for AI-powered content generation</p>
+        <h1 className="text-4xl font-bold bg-gradient-to-l from-[#fb6f92] to-[#ff8fab] bg-clip-text text-transparent mb-4">בחרו את התוכנית שלכם</h1>
+        <p className="text-lg text-gray-600 mb-8">תמחור פשוט ושקוף ליצירת תוכן באמצעות AI</p>
 
         {/* Billing Toggle */}
-        <div className="flex items-center justify-center gap-3">
-          <span className={`text-sm font-medium ${billingInterval === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>
-            Monthly
+        <div className="flex items-center justify-center gap-4">
+          <span className={`text-sm font-medium ${billingInterval === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
+            שנתי <span className="text-[#fb6f92]">(חסכו 25%)</span>
           </span>
           <button
             onClick={() => setBillingInterval(billingInterval === 'monthly' ? 'yearly' : 'monthly')}
-            className="relative inline-flex h-6 w-11 items-center rounded-full bg-orange-500 transition-colors"
+            className="relative inline-flex h-7 w-14 items-center rounded-full transition-colors"
+            style={{
+              backgroundColor: billingInterval === 'monthly' ? '#fb6f92' : '#e5e7eb'
+            }}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                billingInterval === 'yearly' ? 'translate-x-6' : 'translate-x-1'
+              className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform shadow-md ${
+                billingInterval === 'monthly' ? 'translate-x-1' : 'translate-x-8'
               }`}
             />
           </button>
-          <span className={`text-sm font-medium ${billingInterval === 'yearly' ? 'text-gray-900' : 'text-gray-500'}`}>
-            Yearly <span className="text-orange-500">(Save 25%)</span>
+          <span className={`text-sm font-medium ${billingInterval === 'monthly' ? 'text-gray-900' : 'text-gray-500'}`}>
+            חודשי
           </span>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
         <PricingCard
-          name="Starter"
+          name="מתחילים"
           monthlyPrice={40}
           yearlyPrice={30}
           billingInterval={billingInterval}
           credits={315}
           features={[
-            '315 credits per month',
-            'Up to 300 AI images',
-            'Up to 3 videos (5 seconds)',
-            'Standard processing queue',
-            'Email support',
-            'Commercial usage rights',
+            '315 קרדיטים לחודש',
+            'עד 300 תמונות AI',
+            'עד 3 סרטונים (5 שניות)',
+            'תור עיבוד רגיל',
+            'תמיכה במייל',
+            'זכויות שימוש מסחרי',
           ]}
           priceId={PRICING.starter[billingInterval]}
           popular={false}
         />
         <PricingCard
-          name="Ultra"
+          name="אולטרה"
           monthlyPrice={299}
           yearlyPrice={250}
           billingInterval={billingInterval}
           credits={1750}
           features={[
-            '1,750 credits per month',
-            'Up to 1,000 AI images',
-            'Up to 150 videos (5 seconds)',
-            'Priority processing (instant)',
-            'Priority support',
-            'Commercial usage rights',
-            'Advanced AI models',
+            '1,750 קרדיטים לחודש',
+            'עד 1,000 תמונות AI',
+            'עד 150 סרטונים (5 שניות)',
+            'עיבוד מיידי (עדיפות)',
+            'תמיכה עדיפות',
+            'זכויות שימוש מסחרי',
+            'מודלים מתקדמים של AI',
           ]}
           priceId={PRICING.ultra[billingInterval]}
           popular={true}
         />
-      </div>
-
-      {/* Credit Breakdown */}
-      <div className="mt-16 max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Credit Pricing</h2>
-        <div className="bg-gray-50 rounded-lg p-6">
-          <div className="grid md:grid-cols-3 gap-4 text-center">
-            <div>
-              <p className="text-3xl font-bold text-orange-500">1</p>
-              <p className="text-sm text-gray-600 mt-1">Credit per Image</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-orange-500">5</p>
-              <p className="text-sm text-gray-600 mt-1">Credits per 5sec Video</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-orange-500">10</p>
-              <p className="text-sm text-gray-600 mt-1">Credits per 10sec Video</p>
-            </div>
-          </div>
-        </div>
       </div>
     </main>
   );
@@ -133,30 +114,30 @@ function PricingCard({
 
   return (
     <div className={`relative pt-6 pb-8 px-6 rounded-2xl border-2 ${
-      popular ? 'border-orange-500 shadow-xl' : 'border-gray-200'
+      popular ? 'border-[#fb6f92] shadow-xl' : 'border-gray-200'
     }`}>
       {popular && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className="inline-flex items-center gap-1 bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+          <span className="inline-flex items-center gap-1 bg-[#fb6f92] text-white px-4 py-1 rounded-full text-sm font-medium">
             <Sparkles className="h-4 w-4" />
-            Most Popular
+            הכי פופולרי
           </span>
         </div>
       )}
 
       <h2 className="text-2xl font-bold text-gray-900 mb-2">{name}</h2>
-      <p className="text-sm text-gray-600 mb-4">{credits} credits/month</p>
+      <p className="text-sm text-gray-600 mb-4">{credits} קרדיטים/חודש</p>
 
       <div className="mb-6">
         <p className="text-5xl font-bold text-gray-900">
           ${displayPrice}
           <span className="text-xl font-normal text-gray-600">
-            /mo
+            /חודש
           </span>
         </p>
         {billingInterval === 'yearly' && (
           <p className="text-sm text-gray-500 mt-1">
-            ${yearlyTotal}/year (billed annually)
+            ${yearlyTotal}/שנה (חיוב שנתי)
           </p>
         )}
       </div>
@@ -164,7 +145,7 @@ function PricingCard({
       <ul className="space-y-3 mb-8">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start">
-            <Check className={`h-5 w-5 ${popular ? 'text-orange-500' : 'text-gray-400'} mr-3 mt-0.5 flex-shrink-0`} />
+            <Check className={`h-5 w-5 ${popular ? 'text-[#fb6f92]' : 'text-gray-400'} ml-3 mt-0.5 flex-shrink-0`} />
             <span className="text-gray-700">{feature}</span>
           </li>
         ))}
@@ -172,7 +153,16 @@ function PricingCard({
 
       <form action={checkoutAction}>
         <input type="hidden" name="priceId" value={priceId} />
-        <SubmitButton popular={popular} />
+        <button
+          type="submit"
+          className={`w-full py-3 px-6 rounded-lg font-semibold transition-all ${
+            popular
+              ? 'bg-gradient-to-l from-[#fb6f92] to-[#ff8fab] text-white hover:from-[#fa5a82] hover:to-[#ff7a9b]'
+              : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+          }`}
+        >
+          התחילו עכשיו
+        </button>
       </form>
     </div>
   );

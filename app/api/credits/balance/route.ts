@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUser, getUserWithTeam } from '@/lib/db/queries';
-import { getBalance } from '@/credits/credit-service';
+import { getBalance } from '@/lib/credits/credit-service';
 
 export const dynamic = 'force-dynamic';
 

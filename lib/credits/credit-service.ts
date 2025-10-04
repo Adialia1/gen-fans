@@ -155,27 +155,49 @@ export async function replenishTeamCredits(teamId: number): Promise<void> {
         throw new Error('Team not found');
       }
 
-      // Get current balance
-      const [balance] = await tx
+      // Get or create credit balance
+      let [balance] = await tx
         .select()
         .from(creditBalances)
         .where(eq(creditBalances.teamId, teamId))
         .for('update');
 
+      // Create balance if it doesn't exist
       if (!balance) {
-        throw new Error('Credit balance not found');
+        console.log(`Creating initial credit balance for team ${teamId}`);
+        const nextReplenishment = new Date();
+        nextReplenishment.setMonth(nextReplenishment.getMonth() + 1);
+
+        await tx.insert(creditBalances).values({
+          teamId,
+          availableCredits: '0.00',
+          reservedCredits: '0.00',
+          bonusCredits: '0.00',
+          totalAllocated: '0.00',
+          nextReplenishmentAt: nextReplenishment
+        });
+
+        [balance] = await tx
+          .select()
+          .from(creditBalances)
+          .where(eq(creditBalances.teamId, teamId))
+          .for('update');
       }
 
-      // Determine plan from team's stripeSubscriptionId or default to free
-      // For now, we'll determine based on existing allocation
-      let plan: keyof typeof PLAN_CREDITS = 'free';
-      const currentAllocated = parseFloat(balance.totalAllocated);
+      // Determine credit allocation based on plan name
+      let creditsToAllocate = 0;
+      const planName = team.planName?.toLowerCase() || '';
 
-      if (currentAllocated >= 10000) plan = 'enterprise';
-      else if (currentAllocated >= 2000) plan = 'pro';
-      else if (currentAllocated >= 500) plan = 'basic';
+      // Map plan names to credit amounts (matching the pricing page)
+      if (planName.includes('ultra') || planName.includes('אולטרה')) {
+        creditsToAllocate = 1750;
+      } else if (planName.includes('starter') || planName.includes('מתחילים')) {
+        creditsToAllocate = 315;
+      } else {
+        creditsToAllocate = 0; // Free plan
+      }
 
-      const newAllocation = PLAN_CREDITS[plan];
+      console.log(`Allocating ${creditsToAllocate} credits for team ${teamId} with plan: ${planName}`);
 
       // Calculate next replenishment date (1 month from now)
       const nextReplenishment = new Date();
@@ -185,10 +207,10 @@ export async function replenishTeamCredits(teamId: number): Promise<void> {
       await tx
         .update(creditBalances)
         .set({
-          availableCredits: newAllocation.toString(),
+          availableCredits: creditsToAllocate.toString(),
           reservedCredits: '0.00',
           bonusCredits: '0.00',
-          totalAllocated: newAllocation.toString(),
+          totalAllocated: creditsToAllocate.toString(),
           lastReplenishmentAt: new Date(),
           nextReplenishmentAt: nextReplenishment,
           updatedAt: new Date()
@@ -199,15 +221,17 @@ export async function replenishTeamCredits(teamId: number): Promise<void> {
       await tx.insert(creditTransactions).values({
         teamId,
         transactionType: 'replenishment',
-        amount: newAllocation.toString(),
-        balanceBefore: balance.availableCredits,
-        balanceAfter: newAllocation.toString(),
+        amount: creditsToAllocate.toString(),
+        balanceBefore: balance?.availableCredits || '0.00',
+        balanceAfter: creditsToAllocate.toString(),
         metadata: {
-          plan,
+          plan: planName,
           replenishedAt: new Date().toISOString(),
-          previousAllocation: balance.totalAllocated
+          previousAllocation: balance?.totalAllocated || '0.00'
         }
       });
+
+      console.log(`Successfully allocated ${creditsToAllocate} credits for team ${teamId}`);
     });
   } catch (error) {
     console.error('Failed to replenish team credits:', error);

@@ -24,6 +24,17 @@ export async function createCheckoutSession({
     redirect(`/sign-up?redirect=checkout&priceId=${priceId}`);
   }
 
+  // If the team already has an active subscription, cancel it first
+  if (team.stripeSubscriptionId) {
+    try {
+      console.log(`Cancelling existing subscription ${team.stripeSubscriptionId} for team ${team.id}`);
+      await stripe.subscriptions.cancel(team.stripeSubscriptionId);
+    } catch (error) {
+      console.error('Failed to cancel existing subscription:', error);
+      // Continue with checkout even if cancellation fails
+    }
+  }
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     line_items: [
@@ -35,13 +46,16 @@ export async function createCheckoutSession({
     mode: 'subscription',
     success_url: `${process.env.BASE_URL}/api/stripe/checkout?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.BASE_URL}/pricing`,
-    customer: team.stripeCustomerId || undefined,
+    // Use customer if it exists, otherwise use customer_email (but never both)
+    ...(team.stripeCustomerId
+      ? { customer: team.stripeCustomerId }
+      : { customer_email: user.email }
+    ),
     client_reference_id: user.id.toString(),
     allow_promotion_codes: true,
     subscription_data: {
       trial_period_days: 14
     },
-    customer_email: user.email,
   });
 
   redirect(session.url!);
@@ -131,19 +145,54 @@ export async function handleSubscriptionChange(
 
   if (status === 'active' || status === 'trialing') {
     const plan = subscription.items.data[0]?.plan;
+    const productId = typeof plan?.product === 'string' ? plan.product : plan?.product?.id;
+
+    // Fetch the full product details to get the name
+    let planName = null;
+    if (productId) {
+      const product = await stripe.products.retrieve(productId);
+      planName = product.name;
+    }
+
+    console.log(`Updating team ${team.id} subscription to plan: ${planName} (${status})`);
+
     await updateTeamSubscription(team.id, {
       stripeSubscriptionId: subscriptionId,
-      stripeProductId: plan?.product as string,
-      planName: (plan?.product as Stripe.Product).name,
+      stripeProductId: productId || null,
+      planName: planName,
       subscriptionStatus: status
     });
-  } else if (status === 'canceled' || status === 'unpaid') {
-    await updateTeamSubscription(team.id, {
-      stripeSubscriptionId: null,
-      stripeProductId: null,
-      planName: null,
-      subscriptionStatus: status
-    });
+  } else if (status === 'canceled' || status === 'unpaid' || status === 'past_due') {
+    // For past_due, keep plan info but update status so user knows payment failed
+    if (status === 'past_due') {
+      const plan = subscription.items.data[0]?.plan;
+      const productId = typeof plan?.product === 'string' ? plan.product : plan?.product?.id;
+
+      let planName = null;
+      if (productId) {
+        const product = await stripe.products.retrieve(productId);
+        planName = product.name;
+      }
+
+      console.log(`Payment overdue for team ${team.id} - marking as past_due`);
+
+      await updateTeamSubscription(team.id, {
+        stripeSubscriptionId: subscriptionId,
+        stripeProductId: productId || null,
+        planName: planName,
+        subscriptionStatus: status
+      });
+    } else {
+      // For canceled/unpaid, clear everything
+      console.log(`Subscription ${status} for team ${team.id} - clearing subscription data`);
+
+      await updateTeamSubscription(team.id, {
+        stripeSubscriptionId: null,
+        stripeProductId: null,
+        planName: null,
+        subscriptionStatus: status
+      });
+    }
   }
 }
 
